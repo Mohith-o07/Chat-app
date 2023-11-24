@@ -9,8 +9,12 @@ const msgInput = document.querySelector('#message');
 const nameInput = document.querySelector('#name');
 const chatRoom = document.querySelector('#room');
 let temp;
+let strtemp;
     const sendMessage = e => {
       e.preventDefault();
+      if(strtemp==="q"){
+        alert("check room and name!");
+      }
       if (nameInput.value && msgInput.value && chatRoom.value) {
         socket.emit('message',{
           name:nameInput.value,
@@ -32,7 +36,9 @@ let temp;
         })
         //console.log(lastElement.textContent);
         temp=chatRoom.value;
+        msgInput.textContent="";
          msgInput.focus();
+         strtemp="";
       }
     }
 
@@ -75,6 +81,10 @@ let temp;
           else{
             chatDisplay.appendChild(li);
           }
+      }
+      else if(text===`user with the same name already exists in the room ${temp}! Please try a unique name.`){
+        strtemp="q";
+        alert(text);
       }
       else{
         chatDisplay.appendChild(li);
