@@ -8,7 +8,7 @@ const chatDisplay=document.querySelector('.chat-display');
 const msgInput = document.querySelector('#message');
 const nameInput = document.querySelector('#name');
 const chatRoom = document.querySelector('#room');
-
+let temp;
     const sendMessage = e => {
       e.preventDefault();
       if (nameInput.value && msgInput.value && chatRoom.value) {
@@ -17,6 +17,8 @@ const chatRoom = document.querySelector('#room');
           text:msgInput.value
       });
         msgInput.value = "";
+      }else{
+        alert("Check the values for name,room and message!");//makes sure user and room are entered!
       }
       msgInput.focus();
     }
@@ -28,6 +30,9 @@ const chatRoom = document.querySelector('#room');
           name:nameInput.value,
           room:chatRoom.value
         })
+        //console.log(lastElement.textContent);
+        temp=chatRoom.value;
+         msgInput.focus();
       }
     }
 
@@ -41,14 +46,14 @@ const chatRoom = document.querySelector('#room');
       socket.emit('activity',nameInput.value)
     })
   
-    // Listening for messages from the server
+    // Listening for messages from the server and renders the message to the html..
     socket.on("message", (data) => {
       activity.textContent="";
       const {name,text,time}=data;
       const li = document.createElement('li');
       li.className='post';
-      if(name===nameInput.value) li.className='post post--left';
-      if(name!==nameInput.value && name!=='Admin') li.className='post post--right';
+      if(name===nameInput.value) li.className='post post--right';
+      if(name!==nameInput.value && name!=='Admin') li.className='post post--left';
       if(name!=='Admin'){
         li.innerHTML=`<div class="post__header ${name===nameInput.value
                 ?'post__header--user'
@@ -61,8 +66,19 @@ const chatRoom = document.querySelector('#room');
         }else{
           li.innerHTML=`<div class="post__text">${text}</div>`
         }
-      document.querySelector('.chat-display').appendChild(li);
-
+        let lastElement=chatDisplay.querySelector('li:last-child');
+        if(text===`you have joined the ${temp} chat room`){
+          if(lastElement.textContent!=='Welcome to Chat App!'){
+            chatDisplay.textContent="";
+            chatDisplay.appendChild(li);
+          }
+          else{
+            chatDisplay.appendChild(li);
+          }
+      }
+      else{
+        chatDisplay.appendChild(li);
+      }
       chatDisplay.scrollTop=chatDisplay.scrollHeight;
     });
 

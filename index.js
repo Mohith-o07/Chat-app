@@ -25,7 +25,7 @@ const UsersState={
     }
 }
 
-const io=new Server(expressServer,{
+const io=new Server(expressServer,{ //manages socket connections...
     // cors:{
     //     origin:process.env.NODE_ENV==="production"?false:["http://localhost:5500","http://127.0.0.1:5500"]
     // }
@@ -44,7 +44,7 @@ const buildMsg=(name,text)=>{
 
 //user functions..
 const activateUser=(id,name,room)=>{
-    const user={id,name,room}
+    const user={id,name,room} //shorthand notation..
     UsersState.setUsers([
         ...UsersState.users.filter(user=>user.id!==id),user
     ])
@@ -71,7 +71,7 @@ const getAllActiveRooms=()=>{
 
 io.on('connection',socket=>{
     console.log(`user ${socket.id} connected`)
-
+    console.log(UsersState.users);
     //upon connection sending message to only user..
     socket.emit('message',buildMsg(ADMIN,"Welcome to Chat App!"));
 
@@ -82,10 +82,8 @@ io.on('connection',socket=>{
 
         if(prevRoom){
             socket.leave(prevRoom);
-            io.to(prevRoom).emit('message',buildMsg(ADMIN,'${name} has left the room'))
+            io.to(prevRoom).emit('message',buildMsg(ADMIN,`${name} has left the room`))
         }
-
-        const user=activateUser(socket.id,name,room);
 
         //can't update previous room users list until after the state update in activate user
         if(prevRoom){
@@ -95,6 +93,13 @@ io.on('connection',socket=>{
         }
 
         //join room
+        if(UsersState.users.find(user=>((user.name).toLowerCase()===name.toLowerCase()) && user.room===room)){
+            //console.log(user.name.toLowerCase(),user.room);
+            socket.emit('message',buildMsg(ADMIN,
+                `user with the same name already exists in the room ${room}! Please try a unique name.`));
+        }
+        else{
+        const user=activateUser(socket.id,name,room);
         socket.join(user.room)
 
         //to user who joined
@@ -114,6 +119,7 @@ io.on('connection',socket=>{
         io.emit('roomList',{
             rooms:getAllActiveRooms()
         })
+    }
     })
 
     //when user disconnects - to all others
@@ -135,12 +141,6 @@ io.on('connection',socket=>{
 
         console.log(`User ${socket.id} disconnected`);
     })
-    // //upon connection to all others..
-    // socket.broadcast.emit('message',`user ${socket.id.substring(0,5)} connected`)
-    // socket.on('message',data=>{
-    //     console.log(data);
-    //     io.emit('message',`${socket.id.substring(0,5)}: ${data}`)
-    // })
 
     //Listening for a message event..
     socket.on('message',({name,text})=>{
@@ -153,7 +153,7 @@ io.on('connection',socket=>{
     //listen for activity..
     socket.on('activity',name=>{
         const room=getUser(socket.id)?.room;
-        socket.broadcast.emit('activity',name);
+        socket.to(room).emit('activity',name);
     })
 })
 
