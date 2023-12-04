@@ -1,3 +1,4 @@
+/* Resetting default margin, padding, and box-sizing */
 * {
     margin: 0;
     padding: 0;
@@ -6,11 +7,13 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Body styling */
 body {
     background-color: #000;
     color: #fff;
 }
 
+/* Styling for the main content area */
 main {
     height: 100vh;
     padding: 1rem;
@@ -18,6 +21,7 @@ main {
     flex-flow: column;
 }
 
+/* Styling for forms */
 form {
     width: 100%;
     margin: auto;
@@ -28,6 +32,7 @@ form {
     gap: .25rem;
 }
 
+/* Styling for input and button elements */
 input {
     flex-grow: 1;
     max-width: calc(80% - .25rem);
@@ -43,6 +48,7 @@ button {
     padding: .5rem;
 }
 
+/* Styling for the chat display area */
 .chat-display {
     background-color: #333;
     list-style-type: none;
@@ -58,6 +64,7 @@ button {
     flex-grow: 1;
 }
 
+/* Styling for individual chat messages */
 .post {
     background-color: #eee;
     border-radius: 10px;
@@ -77,6 +84,7 @@ button {
     align-self: flex-end;
 }
 
+/* Styling for the header of each chat message */
 .post__header {
     color: #fff;
     padding: .25rem .5rem;
@@ -102,12 +110,14 @@ button {
     font-size: .8rem;
 }
 
+/* Styling for the text content of each chat message */
 .post__text {
     margin-top: 5px;
     color: #333;
     padding: .25rem .5rem;
 }
 
+/* Styling for user list, room list, and activity status */
 .user-list,
 .room-list,
 .activity {

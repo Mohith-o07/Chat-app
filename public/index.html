@@ -1,34 +1,47 @@
+<!-- The main HTML structure for the chat app -->
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
+    <!-- Metadata for character set and viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the web page -->
     <title>Chat App</title>
+    <!-- Linking the CSS file for styling -->
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js" integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Including the Socket.IO library for real-time communication -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"
+        integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Including the main JavaScript file -->
     <script defer src="app.js"></script>
 </head>
+
 <body>
+    <!-- Main content of the chat app -->
     <main>
+        <!-- Form for joining a chat room -->
         <form class="form-join">
             <input type="text" id="name" maxlength="26" placeholder="your name" size="5" required autofocus>
             <input type="text" id="room" maxlength="26" placeholder="chat room" size="5" required>
             <button id="join" type="submit">join</button>
         </form>
 
+        <!-- Container for displaying chat messages -->
         <ul class="chat-display"></ul>
 
+        <!-- Containers for displaying user list, room list, and activity status -->
         <p class="user-list"></p>
-
         <p class="room-list"></p>
-
         <p class="activity"></p>
 
+        <!-- Form for sending messages -->
         <form class="form-msg">
             <input type="text" id="message" placeholder="your message.." required>
             <button type="submit">send</button>
         </form>
     </main>
 </body>
+
 </html>
