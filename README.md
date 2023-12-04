@@ -30,13 +30,13 @@ Make sure you have Node.js installed on your machine. You can download it from [
 1. Clone the repository to your local machine.
 
 ```bash
-git clone https://github.com/your-username/real-time-chat-app.git
+git clone https://github.com/Mohith-o07/Chat-app.git
 ```
 
 2. Navigate to the project directory.
 
 ```bash
-cd real-time-chat-app
+cd server
 ```
 
 3. Install the dependencies.
