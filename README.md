@@ -1,5 +1,5 @@
 
-# [Real-Time Chat App](https://real-time-chat-app-2nic.onrender.com)
+# [Real-Time Chat App](https://chat-app-qpa1.onrender.com/)
 
 This project is a simple real-time chat application built using Node.js, Express, and Socket.IO. It allows users to join different chat rooms, exchange messages, and see a list of active users in each room.
 
