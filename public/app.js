@@ -1,5 +1,5 @@
 // Establishing a WebSocket connection using Socket.IO
-const socket = io('ws://localhost:3500');
+const socket = io('https://chat-app-qpa1.onrender.com/');
 
 // Selecting HTML elements for manipulation
 const activity = document.querySelector('.activity');
