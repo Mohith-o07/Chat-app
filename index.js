@@ -48,6 +48,7 @@ const buildMsg = (name, text) => {
 };
 
 // User-related functions
+//activates or sets the user.
 const activateUser = (id, name, room) => {
     const user = { id, name, room };
     UsersState.setUsers([
@@ -56,7 +57,7 @@ const activateUser = (id, name, room) => {
     return user;
 };
 
-const userLeavesApp = (id) => {
+const userLeavesApp = id => {
     UsersState.setUsers(
         UsersState.users.filter(user => user.id !== id)
     );
@@ -83,41 +84,46 @@ io.on('connection', socket => {
 
     // Handling user entry into a chat room
     socket.on('enterRoom', ({ name, room }) => {
+        // Joining the new room
+        if (UsersState.users.find(user => ((user.name).toLowerCase() === name.toLowerCase()) && user.room === room)) { //avoiding duplicate users
+            socket.emit('message', buildMsg(ADMIN, `user with the same name already exists in the room ${room}! Please try a unique name to join.`));
+            const curUser = getUser(socket.id);
+            //console.log(curUser,'in index.js');
+            socket.emit('curUser',curUser);
+        } 
+        else {
         // Leaving the previous room if any
+        //console.log(`I'm in room ${room} hoi`);
         const prevRoom = getUser(socket.id)?.room;
         if (prevRoom) {
-            socket.leave(prevRoom);
-            io.to(prevRoom).emit('message', buildMsg(ADMIN, `${name} has left the room`));
+            // if(prevRoom===room){
+            //     socket.emit('message',buildMsg(ADMIN,'you are in the same room that you requested!'));
+            // }
+        socket.leave(prevRoom);
+        io.to(prevRoom).emit('message', buildMsg(ADMIN, `${name} has left the room`));
         }
+        //setting the user with the room he intended.
+        const user = activateUser(socket.id, name, room);
+        socket.join(user.room);
 
+        // Sending a message to the user who joined
+        socket.emit('message', buildMsg(ADMIN, `you have joined the ${user.room} chat room`));
+
+        // Broadcasting to everyone else in the room
+        socket.broadcast.to(user.room).emit('message', buildMsg(ADMIN, `${user.name} has joined the room`));
+
+        // Updating user list for the current room
+        io.to(user.room).emit('userList', {
+            users: getUsersInRoom(user.room)
+        });
         // Updating user list for the previous room
-        if (prevRoom) {
-            io.to(prevRoom).emit('userList', {
-                users: getUsersInRoom(prevRoom)
-            });
-        }
+        io.to(prevRoom).emit('userList', {
+             users: getUsersInRoom(prevRoom)
+        });
 
-        // Joining the new room
-        if (UsersState.users.find(user => ((user.name).toLowerCase() === name.toLowerCase()) && user.room === room)) {
-            socket.emit('message', buildMsg(ADMIN, `user with the same name already exists in the room ${room}! Please try a unique name.`));
-        } else {
-            const user = activateUser(socket.id, name, room);
-            socket.join(user.room);
-
-            // Sending a message to the user who joined
-            socket.emit('message', buildMsg(ADMIN, `you have joined the ${user.room} chat room`));
-
-            // Broadcasting to everyone else in the room
-            socket.broadcast.to(user.room).emit('message', buildMsg(ADMIN, `${user.name} has joined the room`));
-
-            // Updating user list for the current room
-            io.to(user.room).emit('userList', {
-                users: getUsersInRoom(user.room)
-            });
-
-            // Updating rooms list for everyone
-            io.emit('roomList', {
-                rooms: getAllActiveRooms()
+        // Updating rooms list for everyone
+        io.emit('roomList', {
+             rooms: getAllActiveRooms()
             });
         }
     });

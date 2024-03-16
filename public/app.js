@@ -10,15 +10,15 @@ const chatDisplay = document.querySelector('.chat-display');
 const msgInput = document.querySelector('#message');
 const nameInput = document.querySelector('#name');
 const chatRoom = document.querySelector('#room');
-let temp;
-let strtemp;
+let temp; //used to store room name to render to the frontend.
+//let strtemp; //ensures the user doesn't send message if he is a duplicate.
 
 // Function to send a chat message
 const sendMessage = e => {
     e.preventDefault();
-    if (strtemp === "q") {
-        alert("check room and name!");
-    }
+    // if (strtemp === "q") {
+    //     alert("you can't send a message. check room and name, and join a different room or change your name in order to join this room and send a message");
+    // }
     if (nameInput.value && msgInput.value && chatRoom.value) {
         // Emitting a 'message' event to the server
         socket.emit('message', {
@@ -44,7 +44,7 @@ const enterRoom = e => {
         temp = chatRoom.value;
         msgInput.textContent = "";
         msgInput.focus();
-        strtemp = "";
+        //strtemp = "";
     }
 }
 
@@ -83,19 +83,19 @@ socket.on("message", (data) => {
     }
     let lastElement = chatDisplay.querySelector('li:last-child');
     if (text === `you have joined the ${temp} chat room`) {
-        if (lastElement.textContent !== 'Welcome to Chat App!') {
+        if (lastElement.textContent !== 'Welcome to Chat App!') { //leaving a room and joining another room
             chatDisplay.textContent = "";
             chatDisplay.appendChild(li);
         } else {
             chatDisplay.appendChild(li);
         }
-    } else if (text === `user with the same name already exists in the room ${temp}! Please try a unique name.`) {
-        strtemp = "q";
+    } else if (text === `user with the same name already exists in the room ${temp}! Please try a unique name to join.` || text==='you are in the same room that you requested!') {
+        //strtemp = "q";
         alert(text);
     } else {
         chatDisplay.appendChild(li);
     }
-    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    chatDisplay.scrollTop = chatDisplay.scrollHeight;  //code to see latest messages without scrolling down
 });
 
 // Timer for clearing the typing activity message after 3 seconds
@@ -147,3 +147,15 @@ socket.on('roomList', ({
 }) => {
     showRooms(rooms)
 });
+socket.on('curUser',(curUser)=>{
+    //console.log('in app.js',typeof curUser,curUser);
+    if(curUser){
+        //console.log('in if');
+        chatRoom.value=curUser.room;
+        nameInput.value=curUser.name;
+    }
+    else{
+    chatRoom.value="";
+    nameInput.value="";
+    }
+})
